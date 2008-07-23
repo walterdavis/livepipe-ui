@@ -6,6 +6,7 @@ namespace :test do
       all_fine = false unless system("java -jar ~/devtools/java/rhino/js.jar spec/#{ENV["TEST"]}")
     else
       Dir.glob("spec/*.js").each do |file|
+        puts "Running #{file}"
         all_fine = false unless system("java -jar ~/devtools/java/rhino/js.jar #{file}")
       end
       raise "JSSpec test failures" unless all_fine
