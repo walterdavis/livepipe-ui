@@ -565,7 +565,7 @@ Expectation = (function() {
 		});
 	};
 
-	extend(Array, Date, Function, Number, RegExp, String);
+	extend(Array, Date, Function, Number, RegExp, String, Boolean);
 	Class.create = Class.create.wrap(function() {
 		var args = $A(arguments), proceed = args.shift(), klass = proceed.apply(Class, args);
 		extend(klass);
