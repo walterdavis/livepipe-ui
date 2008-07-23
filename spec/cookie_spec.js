@@ -1,0 +1,2 @@
+load("jsspec/config.js");
+

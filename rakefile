@@ -1,0 +1,16 @@
+namespace :test do
+  desc "Runs all the JSSpec tests and collects the results"
+  task :jsspec do
+    all_fine = true
+    if ENV["TEST"]
+      all_fine = false unless system("java -jar ~/devtools/java/rhino/js.jar spec/#{ENV["TEST"]}")
+    else
+      Dir.glob("spec/*.js").each do |file|
+        all_fine = false unless system("java -jar ~/devtools/java/rhino/js.jar #{file}")
+      end
+      raise "JSSpec test failures" unless all_fine
+    end
+  end
+end
+
+task :default => "test:jsspec"
