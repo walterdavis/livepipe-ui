@@ -27,6 +27,28 @@ with(Spec) {
       eventCounter.should(equal(1));
     });
   }});
+  describe("Cookie get", function() {with(this) {
+    it("should trigger a 'get' event ", function() {
+      var eventCounter = 0;
+      Cookie.observeOnce("get", function() {
+        eventCounter++;
+      });
+      Cookie.get("foo");
+      eventCounter.should(equal(1));
+    });
+    it("returns null if there is no value for this name", function() {
+      document.cookie = "no name value pair here";
+      (!Cookie.get("foo")).should(equal(true));
+    });
+    it("returns value from a cookie with no expiration", function() {
+      document.cookie = "foo=value; path=/";
+      Cookie.get("foo").should(equal("value"));
+    });
+    it("returns value from a cookie with an expiration", function() {
+      document.cookie="foo=transientValue; expires=Wed, 23 Jul 2008 18:16:12 GMT; path=/";
+      Cookie.get("foo").should(equal("transientValue"));
+    });
+  }});
 }
 
 Specs.report = "ConsoleReport";
