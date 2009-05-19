@@ -88,8 +88,7 @@ Control.ContextMenu = Class.create({
 		}.bind(this));
 	},
 	addItem: function(params){
-		if(!'enabled' in params)
-			params.enabled = true;
+        if (!('enabled' in params)) { params.enabled = true; }
 		this.items.push(params);
 		return this;
 	},
