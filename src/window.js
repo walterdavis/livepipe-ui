@@ -440,7 +440,7 @@ Control.Window = Class.create({
 	destroy: function(){
 		this.container.stopObserving('mousedown',this.bringToFrontHandler);
 		if(this.draggable){
-			Resizables.removeObserver(this.container);
+			Draggables.removeObserver(this.container);
 			this.draggable.handle.stopObserving('mousedown',this.bringToFrontHandler);
 			this.draggable.destroy();
 		}
