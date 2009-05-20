@@ -88,7 +88,7 @@ Control.Rating = Class.create({
 		}.bind(this));
 	},
 	setValueFromInput: function(input,prevent_callbacks){
-		this.setValue((input.options ? input.options[input.options.selectedIndex].value : input.value),true,prevent_callbacks);
+        this.setValue($F(input),true,prevent_callbacks);
 	},
 	setValue: function(value,force_selected,prevent_callbacks){
 		this.value = value;
