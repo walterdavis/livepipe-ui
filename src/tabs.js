@@ -75,7 +75,7 @@ Control.Tabs = Class.create({
 	},
 	addTab: function(link){
 		this.links.push(link);
-		link.key = link.getAttribute('href').replace(window.location.href.split('#')[0],'').split('/').last().replace(/#/,'');
+		link.key = link.getAttribute('href').replace(window.location.href.split('#')[0],'').split('#').last().replace(/#/,'');
 		var container = $(link.key);
 		if(!container)
 			throw "Control.Tabs: #" + link.key + " was not found on the page."
