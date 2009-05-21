@@ -45,17 +45,24 @@ Control.SelectMultiple = Class.create({
 		}
 		this.hasExtraOption = false;
 		this.checkboxes.each(function(checkbox){
-			checkbox.observe('click',this.checkboxOnClick.bind(this,checkbox));
+		 checkbox.observe('click',this.checkboxOnClick.bind(this,checkbox));
 		}.bind(this));
 		this.select.observe('change',this.selectOnChange.bind(this));
 		this.countAndCheckCheckBoxes();
 		if(!value_was_set)
-			this.scanCheckBoxes();
+		 this.scanCheckBoxes();
 		this.notify('afterChange',this.select.options[this.select.options.selectedIndex].value);
 	},
 	countAndCheckCheckBoxes: function(){
 		this.numberOfCheckedBoxes = this.checkboxes.inject(0,function(number,checkbox){
 			checkbox.checked = (this.select.options[this.select.options.selectedIndex].value == checkbox.value);
+			var value_string = this.select.options[this.select.options.selectedIndex].value;
+			var value_collection = $A(value_string.split ? value_string.split(this.options.valueSeparator) : value_string)
+			var should_check = value_collection.any(function(value) {
+				if (!should_check && checkbox.value == value)
+					return true;
+			}.bind(this));
+			checkbox.checked = should_check;
 			if(checkbox.checked)
 				++number;
 			return number;
