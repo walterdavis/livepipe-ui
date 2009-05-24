@@ -89,9 +89,12 @@ Control.SelectMultiple = Class.create({
 		this.notify('afterChange',this.select.options[this.select.options.selectedIndex].value);
 	},
 	checkboxOnClick: function(checkbox){
-		this.numberOfCheckedBoxes += (checkbox.checked) ? 1 : -1;
+        this.numberOfCheckedBoxes = this.checkboxes.findAll(function (c) { 
+            return c.checked; 
+        }).length;
 		this.scanCheckBoxes();
-		this.notify('afterChange',this.select.options[this.select.options.selectedIndex].value);
+        this.notify('afterChange', this.numberOfCheckedBoxes === 0 ? "" :
+            this.select.options[this.select.options.selectedIndex].value);
 	},
 	scanCheckBoxes: function(){
 		switch(this.numberOfCheckedBoxes){
