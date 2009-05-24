@@ -54,7 +54,7 @@ var HotKey = Class.create({
 	},
 	destroy: function(){
 		this.disable();
-		HotKey.hotkeys = Control.HotKey.hotkeys.without(this);
+		HotKey.hotkeys = HotKey.hotkeys.without(this);
 	}
 });
 Object.extend(HotKey,{
