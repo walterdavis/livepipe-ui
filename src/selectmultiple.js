@@ -7,10 +7,12 @@
  * @require prototype.js, livepipe.js
  */
 
-if(typeof(Prototype) == "undefined")
-	throw "Control.SelectMultiple requires Prototype to be loaded.";
-if(typeof(Object.Event) == "undefined")
-	throw "Control.SelectMultiple requires Object.Event to be loaded.";
+/*global Prototype, Class, Option, $, $A, Control, $break,  */
+
+if(typeof(Prototype) == "undefined") {
+	throw "Control.SelectMultiple requires Prototype to be loaded."; }
+if(typeof(Object.Event) == "undefined") {
+	throw "Control.SelectMultiple requires Object.Event to be loaded."; }
 
 Control.SelectMultiple = Class.create({
 	select: false,
@@ -33,10 +35,9 @@ Control.SelectMultiple = Class.create({
 		Object.extend(this.options,options || {});
 		this.select = $(select);
 		this.container =  $(container);
-		this.checkboxes = (typeof(this.options.checkboxSelector) == 'function')
-			? this.options.checkboxSelector.bind(this)()
-			: this.container.getElementsBySelector(this.options.checkboxSelector)
-		;
+		this.checkboxes = (typeof(this.options.checkboxSelector) == 'function') ? 
+            this.options.checkboxSelector.bind(this)() : 
+            this.container.getElementsBySelector(this.options.checkboxSelector);
 		var value_was_set = false;
 		if(this.options.value){
 			value_was_set = true;
@@ -49,28 +50,28 @@ Control.SelectMultiple = Class.create({
 		}.bind(this));
 		this.select.observe('change',this.selectOnChange.bind(this));
 		this.countAndCheckCheckBoxes();
-		if(!value_was_set)
-		 this.scanCheckBoxes();
+		if(!value_was_set) {
+		 this.scanCheckBoxes(); }
 		this.notify('afterChange',this.select.options[this.select.options.selectedIndex].value);
 	},
 	countAndCheckCheckBoxes: function(){
 		this.numberOfCheckedBoxes = this.checkboxes.inject(0,function(number,checkbox){
 			checkbox.checked = (this.select.options[this.select.options.selectedIndex].value == checkbox.value);
 			var value_string = this.select.options[this.select.options.selectedIndex].value;
-			var value_collection = $A(value_string.split ? value_string.split(this.options.valueSeparator) : value_string)
+            var value_collection = $A(value_string.split ? value_string.split(this.options.valueSeparator) : value_string);
 			var should_check = value_collection.any(function(value) {
-				if (!should_check && checkbox.value == value)
-					return true;
+				if (!should_check && checkbox.value == value) {
+					return true; }
 			}.bind(this));
 			checkbox.checked = should_check;
-			if(checkbox.checked)
-				++number;
+			if(checkbox.checked) {
+				++number; }
 			return number;
 		}.bind(this));
 	},
 	setValue: function(value_string){
 		this.numberOfCheckedBoxes = 0;
-		var value_collection = $A(value_string.split ? value_string.split(this.options.valueSeparator) : value_string)
+        var value_collection = $A(value_string.split ? value_string.split(this.options.valueSeparator) : value_string);
 		this.checkboxes.each(function(checkbox){
 			checkbox.checked = false;
 			value_collection.each(function(value){
@@ -106,32 +107,32 @@ Control.SelectMultiple = Class.create({
 						throw $break;
 					}
 				}.bind(this));
+                break;
 			case 0:
 				this.removeExtraOption();
 				break;
 			default:
 				this.addExtraOption();
 				break;
-		};
+		}
 	},
 	getLabelForExtraOption: function(){
-		var label = (typeof(this.options.nameSelector) == 'function' 
-			? this.options.nameSelector.bind(this)()
-			: this.container.getElementsBySelector(this.options.nameSelector).inject([],function(labels,name_element,i){
-				if(this.checkboxes[i].checked)
-					labels.push(name_element.innerHTML);
+		var label = (typeof(this.options.nameSelector) == 'function' ? 
+            this.options.nameSelector.bind(this)() : 
+            this.container.getElementsBySelector(this.options.nameSelector).inject([],function(labels,name_element,i){
+				if(this.checkboxes[i].checked) {
+					labels.push(name_element.innerHTML); }
 				return labels;
 			}.bind(this))
 		).join(this.options.labelSeparator);
-		return (label.length >= this.options.overflowLength && this.options.overflowLength > 0)
-			? (typeof(this.options.overflowString) == 'function' ? this.options.overflowString(label) : this.options.overflowString)
-			: label
-		;
+        return (label.length >= this.options.overflowLength && this.options.overflowLength > 0) ? 
+            (typeof(this.options.overflowString) == 'function' ? this.options.overflowString(label) : this.options.overflowString) : 
+            label;
 	},
 	getValueForExtraOption: function(){
 		return this.checkboxes.inject([],function(values,checkbox){
-			if(checkbox.checked)
-				values.push(checkbox.value);
+			if(checkbox.checked) {
+				values.push(checkbox.value); }
 			return values;
 		}).join(this.options.valueSeparator);
 	},
