@@ -64,7 +64,13 @@ Control.TextArea = Class.create({
 		this.element.scrollTop = scroll_top;
 	},
 	wrapSelection: function(before,after){
-		this.replaceSelection(before + this.getSelection() + after);
+        var sel = this.getSelection();
+        // Remove the wrapping if the selection has the same before/after
+        if (sel.indexOf(before) === 0 && 
+            sel.lastIndexOf(after) === (sel.length - after.length)) {
+            this.replaceSelection(sel.substring(before.length, 
+                sel.length - after.length));
+        } else { this.replaceSelection(before + sel + after); }
 	},
 	insertBeforeSelection: function(text){
 		this.replaceSelection(text + this.getSelection());
