@@ -7,10 +7,12 @@
  * @require prototype.js, effects.js, draggable.js, livepipe.js
  */
 
-if(typeof(Prototype) == "undefined")
-	throw "Control.Selection requires Prototype to be loaded.";
-if(typeof(Object.Event) == "undefined")
-	throw "Control.Selection requires Object.Event to be loaded.";
+/*global window, document, Prototype, Element, Event, $, $$, $break, Control, Draggable */
+
+if(typeof(Prototype) == "undefined") {
+	throw "Control.Selection requires Prototype to be loaded."; }
+if(typeof(Object.Event) == "undefined") {
+	throw "Control.Selection requires Object.Event to be loaded."; }
 
 Control.Selection = {
 	options: {
@@ -44,15 +46,15 @@ Control.Selection = {
 		Control.Selection.selection_div.id = Control.Selection.options.selection_id;
 		Control.Selection.selection_div.style.display = 'none';
 		Control.Selection.selection_div.setStyle(Control.Selection.options.selection_style);
-		Control.Selection.border_width = parseInt(Control.Selection.selection_div.getStyle('border-top-width')) * 2;
+		Control.Selection.border_width = parseInt(Control.Selection.selection_div.getStyle('border-top-width'), 10) * 2;
 		Control.Selection.container = Prototype.Browser.IE ? window.container : window;
 		$(document.body).insert(Control.Selection.selection_div);
 		Control.Selection.enable();
-		if(Control.Selection.options.drag_proxy && typeof(Draggable) != 'undefined')
-			Control.Selection.DragProxy.load();
+		if(Control.Selection.options.drag_proxy && typeof(Draggable) != 'undefined') {
+			Control.Selection.DragProxy.load(); }
 		Event.observe(window,'resize',function(){
-			if(Control.Selection.resizeTimeout)
-				window.clearTimeout(Control.Selection.resizeTimeout);
+			if(Control.Selection.resizeTimeout) {
+				window.clearTimeout(Control.Selection.resizeTimeout); }
 			Control.Selection.resizeTimeout = window.setTimeout(Control.Selection.recalculateLayout,Control.Selection.options.resize_layout_timeout);
 		});
 		if(Prototype.Browser.IE){
@@ -65,7 +67,7 @@ Control.Selection = {
 		if(Prototype.Browser.IE){
 			document.onselectstart = function(){
 				return false;
-			}
+            };
 		}
 		Event.observe(Control.Selection.container,'mousedown',Control.Selection.start);
 		Event.observe(Control.Selection.container,'mouseup',Control.Selection.stop);
@@ -74,7 +76,7 @@ Control.Selection = {
 		if(Prototype.Browser.IE){
 			document.onselectstart = function(){
 				return true;
-			}
+            };
 		}
 		Event.stopObserving(Control.Selection.container,'mousedown',Control.Selection.start);
 		Event.stopObserving(Control.Selection.container,'mouseup',Control.Selection.stop);
@@ -84,8 +86,8 @@ Control.Selection = {
 			var dimensions = element.getDimensions();
 			var offset = element.cumulativeOffset();
 			var scroll_offset = element.cumulativeScrollOffset();
-			if(!element._control_selection)
-				element._control_selection = {};
+			if(!element._control_selection) {
+				element._control_selection = {}; }
 			element._control_selection.top = offset[1] - scroll_offset[1];
 			element._control_selection.left = offset[0] - scroll_offset[0];
 			element._control_selection.width = dimensions.width;
@@ -94,10 +96,10 @@ Control.Selection = {
 	},
 	addSelectable: function(element,object,activation_targets,activation_target_callback){
 		element = $(element);
-		if(activation_targets)
-			activation_targets = activation_targets.each ? activation_targets : [activation_targets];
+		if(activation_targets) {
+			activation_targets = activation_targets.each ? activation_targets : [activation_targets]; }
 		var dimensions = element.getDimensions();
-		var offset = Position.cumulativeOffset(element);
+		var offset = Element.cumulativeOffset(element);
 		element._control_selection = {
 			activation_targets: activation_targets,
 			is_selected: false,
@@ -115,8 +117,8 @@ Control.Selection = {
 				Control.Selection.DragProxy.container.stopObserving('mousemove',element._control_selection.activationTargetMouseMove);
 			},
 			activationTargetMouseDown: function(event){
-				if(!Control.Selection.elements.include(element))
-					Control.Selection.select(element);
+				if(!Control.Selection.elements.include(element)) {
+					Control.Selection.select(element); }
 				Control.Selection.DragProxy.start(event);
 				Control.Selection.DragProxy.container.hide();
 				if(activation_targets){
@@ -128,8 +130,8 @@ Control.Selection = {
 			},
 			activationTargetClick: function(){
 				Control.Selection.select(element);
-				if(typeof(activation_target_callback) == "function")
-					activation_target_callback();
+				if(typeof(activation_target_callback) == "function") {
+					activation_target_callback(); }
 				if(activation_targets){
 					activation_targets.each(function(activation_target){
 						activation_target.stopObserving('mousemove',element._control_selection.activationTargetMouseMove);
@@ -176,26 +178,26 @@ Control.Selection = {
 			}
 		});
 		Control.Selection.selectableElements = Control.Selection.selectableElements.without(element);
-		Control.Selection.selectableObjects = Control.Selection.selectableObjects.slice(0,position).concat(Control.Selection.selectableObjects.slice(position + 1))
+		Control.Selection.selectableObjects = Control.Selection.selectableObjects.slice(0,position).concat(Control.Selection.selectableObjects.slice(position + 1));
 	},
 	select: function(selected_elements){
-		if(typeof(selected_elements) == "undefined" || !selected_elements)
-			selected_elements = [];
-		if(!selected_elements.each && !selected_elements._each)
-			selected_elements = [selected_elements];
+		if(typeof(selected_elements) == "undefined" || !selected_elements) {
+			selected_elements = []; }
+		if(!selected_elements.each && !selected_elements._each) {
+			selected_elements = [selected_elements]; }
 		//comparing the arrays directly wouldn't equate to true in safari so we need to compare each item
 		var selected_items_have_changed = !(Control.Selection.elements.length == selected_elements.length && Control.Selection.elements.all(function(item,i){
 			return selected_elements[i] == item;
 		}));
-		if(!selected_items_have_changed)
-			return;
+		if(!selected_items_have_changed) {
+			return; }
 		var selected_objects_indexed_by_element = {};
 		var selected_objects = selected_elements.collect(function(selected_element){
 			var selected_object = Control.Selection.selectableObjects[Control.Selection.selectableElements.indexOf(selected_element)];
 			selected_objects_indexed_by_element[selected_element] = selected_object;
 			return selected_object;
 		});
-		if(Control.Selection.elements.length == 0 && selected_elements.length != 0){
+		if(Control.Selection.elements.length === 0 && selected_elements.length !== 0){
 			selected_elements.each(function(element){
 				Control.Selection.notify('selected',element,selected_objects_indexed_by_element[element]);
 			});
@@ -216,8 +218,8 @@ Control.Selection = {
 		Control.Selection.notify('change',Control.Selection.elements,Control.Selection.objects);
 	},
 	deselect: function(){
-		if(Control.Selection.notify('deselect') === false)
-			return false;
+		if(Control.Selection.notify('deselect') === false) {
+			return false; }
 		Control.Selection.elements.each(function(element){
 			Control.Selection.notify('deselected',element,Control.Selection.selectableObjects[Control.Selection.selectableElements.indexOf(element)]);
 		});
@@ -228,10 +230,10 @@ Control.Selection = {
 	},
 	//private
 	start: function(event){
-		if(!event.isLeftClick() || Control.Selection.notify('start',event) === false)
-			return false;
-		if(!event.shiftKey && !event.altKey)
-			Control.Selection.deselect();
+		if(!event.isLeftClick() || Control.Selection.notify('start',event) === false) {
+			return false; }
+		if(!event.shiftKey && !event.altKey) {
+			Control.Selection.deselect(); }
 		Event.observe(Control.Selection.container,'mousemove',Control.Selection.onMouseMove);
 		Event.stop(event);
 		return false;
@@ -259,18 +261,18 @@ Control.Selection = {
 		var selection = [];
 		if(event.shiftKey){
 			selection = Control.Selection.elements.clone();
-			if(!selection.include(element))
-				selection.push(element);
+			if(!selection.include(element)) {
+				selection.push(element); }
 		}else if(event.altKey){
 			selection = Control.Selection.elements.clone();
-			if(selection.include(element))
-				selection = selection.without(element);
+			if(selection.include(element)) {
+				selection = selection.without(element); }
 		}else{
 			selection = [element];
 		}
 		Control.Selection.select(selection);
-		if(source == 'click')
-			Event.stop(event);
+		if(source == 'click') {
+			Event.stop(event); }
 	},
 	onMouseMove: function(event){
 		if(!Control.Selection.active){
@@ -284,8 +286,8 @@ Control.Selection = {
 			});
 			if(event.shiftKey && !event.altKey){
 				Control.Selection.elements.each(function(element){
-					if(!current_selection.include(element))
-						current_selection.push(element);
+					if(!current_selection.include(element)) {
+						current_selection.push(element); }
 				});
 			}else if(event.altKey && !event.shiftKey){
 				current_selection = Control.Selection.elements.findAll(function(element){
@@ -369,10 +371,10 @@ Control.Selection = {
 			bottom: element._control_selection.top + element._control_selection.height,
 			right: element._control_selection.left + element._control_selection.width
 		},{
-			top: parseInt(Control.Selection.selection_div.style.top),
-			left: parseInt(Control.Selection.selection_div.style.left),
-			bottom: parseInt(Control.Selection.selection_div.style.top) + parseInt(Control.Selection.selection_div.style.height),
-			right: parseInt(Control.Selection.selection_div.style.left) + parseInt(Control.Selection.selection_div.style.width)
+			top: parseInt(Control.Selection.selection_div.style.top, 10),
+			left: parseInt(Control.Selection.selection_div.style.left, 10),
+			bottom: parseInt(Control.Selection.selection_div.style.top, 10) + parseInt(Control.Selection.selection_div.style.height, 10),
+			right: parseInt(Control.Selection.selection_div.style.left, 10) + parseInt(Control.Selection.selection_div.style.width, 10)
 		})){
 			element._control_selection.is_selected = true;
 			return true;
@@ -404,8 +406,8 @@ Control.Selection = {
 				Control.Selection.DragProxy.container.hide();
 				return;
 			}		    
-			if(Control.Selection.DragProxy.xorigin == Event.pointerX(event) && Control.Selection.DragProxy.yorigin == Event.pointerY(event))
-				return;    		
+			if(Control.Selection.DragProxy.xorigin == Event.pointerX(event) && Control.Selection.DragProxy.yorigin == Event.pointerY(event)) {
+				return; }
 		    Control.Selection.DragProxy.active = true;
 			Control.Selection.DragProxy.container.setStyle({
 				position: 'absolute',
@@ -434,8 +436,8 @@ Control.Selection = {
 		onClick: function(event){
 			Control.Selection.DragProxy.xorigin = Event.pointerX(event);
 			Control.Selection.DragProxy.yorigin = Event.pointerY(event);
-			if(event.isRightClick())
-				Control.Selection.DragProxy.container.hide();
+			if(event.isRightClick()) {
+				Control.Selection.DragProxy.container.hide(); }
 			if(Control.Selection.elements.length >= Control.Selection.options.drag_proxy_threshold && !(event.shiftKey || event.altKey) && (Control.Selection.DragProxy.xorigin != Event.pointerX(event) || Control.Selection.DragProxy.yorigin != Event.pointerY(event))){
 				Control.Selection.DragProxy.start(event);
 				Event.stop(event);
