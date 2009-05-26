@@ -8,18 +8,21 @@
  * @attribution http://www.adamlogic.com/2007/03/20/3_metaprogramming-javascript-presentation
  */
 
-if(typeof(Prototype) == "undefined")
-	throw "Event.Behavior requires Prototype to be loaded.";
-if(typeof(Object.Event) == "undefined")
-	throw "Event.Behavior requires Object.Event to be loaded.";
+/*global Prototype, Class, Event, Try, $, $A, $H */
+
+if(typeof(Prototype) == "undefined") {
+	throw "Event.Behavior requires Prototype to be loaded."; }
+if(typeof(Object.Event) == "undefined") {
+	throw "Event.Behavior requires Object.Event to be loaded."; }
 	
 Event.Behavior = {
 	addVerbs: function(verbs){
-		for(name in verbs){
+        var v;
+        for (var name in verbs) { if (verbs.hasOwnProperty(name)) {
 			v = new Event.Behavior.Verb(verbs[name]);
 			Event.Behavior.Verbs[name] = v;
 			Event.Behavior[name.underscore()] = Event.Behavior[name] = v.getCallbackForStack.bind(v);
-		}
+		}}
 	},
 	addEvents: function(events){
 		$H(events).each(function(event_type){
@@ -38,11 +41,11 @@ Event.Behavior = {
 					return $A(args[0]).each(function(a){
 						return $(e)[action].apply($(e),(a ? [a] : []));
 					});
-				}else
-					return $(e)[action].apply($(e),args || []);
+				}else {
+					return $(e)[action].apply($(e),args || []); }
 			});
-		}else
-			return $(element)[action].apply($(element),args || []);
+		}else {
+			return $(element)[action].apply($(element),args || []); }
 	}
 };
 
@@ -57,19 +60,14 @@ Object.extend(Event.Behavior.Verb.prototype,{
 	initialize: function(action){
 		this.originalAction = action;
 		this.execute = function(action,target,argument){
-			return (argument)
-				? action(target,argument)
-				: action(target)
-			;
+			return (argument) ? action(target,argument) : action(target);
 		}.bind(this,action);
 	},
 	setOpposite: function(opposite_verb){
-		opposite_action = opposite_verb.originalAction;
+		var opposite_action = opposite_verb.originalAction;
 		this.executeOpposite = function(opposite_action,target,argument){
-			return (argument)
-				? opposite_action(target,argument)
-				: opposite_action(target)
-			;
+			return (argument) ? opposite_action(target,argument) : 
+                opposite_action(target);
 		}.bind(this,opposite_action);
 	},
 	getCallbackForStack: function(argument){
@@ -100,13 +98,15 @@ Event.Behavior.addVerbs({
 		return Event.Behavior.invokeElementMethod(element,'removeClassName',[(typeof(class_name) == 'function' ? class_name() : class_name)]);
 	},
 	setClassName: function(element,class_name){
-		c = (typeof(class_name) == 'function') ? class_name() : class_name;
+		var c = (typeof(class_name) == 'function') ? class_name() : class_name;
 		if(typeof(element) == 'function'){
 			return $A(element()).each(function(e){
 				$(e).className = c;
 			});
-		}else
-			return $(element).className = c;
+		}else {
+            c = $(element).className;
+            return c;
+        }
 	},
 	update: function(content,element){
 		return Event.Behavior.invokeElementMethod(element,'update',[(typeof(content) == 'function' ? content() : content)]);
@@ -133,16 +133,13 @@ Object.extend(Event.Behavior.Noun.prototype,{
 		this.argument = argument;
 	},
 	execute: function(){
-		return (this.target)
-			? this.verb.execute(this.target,this.argument)
-			: this.verb.execute(this.argument)
-		;
+		return (this.target) ? this.verb.execute(this.target,this.argument) : 
+            this.verb.execute(this.argument);
 	},
 	executeOpposite: function(){
-		return (this.target)
-			? this.verb.executeOpposite(this.target,this.argument)
-			: this.verb.executeOpposite(this.argument)
-		;
+		return (this.target) ? 
+            this.verb.executeOpposite(this.target,this.argument) : 
+            this.verb.executeOpposite(this.argument);
 	},
 	when: function(subject){
 		this.subject = subject;
@@ -157,11 +154,11 @@ Object.extend(Event.Behavior.Noun.prototype,{
 		);
 	},
 	containsValue: function(match){
-		value = this.getValue();
+		var value = this.getValue();
 		if(typeof(match) == 'function'){
 			return $A(match()).include(value);
-		}else
-			return value.match(match);
+		}else {
+			return value.match(match); }
 	},
 	setTarget: function(target){
 		this.target = target;
@@ -193,8 +190,8 @@ Object.extend(Event.Behavior.Adjective.prototype,{
 	attachObserver: function(execute_on_load){
 		if(this.attached){
 			//this may call things multiple times, but is the only way to gaurentee correct state on startup
-			if(execute_on_load)
-				this.execute();
+			if(execute_on_load) {
+				this.execute(); }
 			return;
 		}
 		this.attached = true;
@@ -213,23 +210,20 @@ Object.extend(Event.Behavior.Adjective.prototype,{
 				}.bind(this));
 			}.bind(this));
 		}
-		if(execute_on_load)
-			this.execute();
+		if(execute_on_load) { this.execute(); }
 	},
 	execute: function(){
-		if(this.match())
-			return this.noun.execute();
-		else if(this.noun.verb.executeOpposite)
-			this.noun.executeOpposite();
+		if(this.match()) { return this.noun.execute(); }
+		else if(this.noun.verb.executeOpposite) { this.noun.executeOpposite(); }
 	},
 	attachCondition: function(callback){
 		this.conditions.push([this.nextConditionType,callback.bind(this)]);
 	},
 	match: function(){
-		if(this.conditions.length == 0)
-			return true;
+		if(this.conditions.length === 0) {
+			return true; }
 		else{
-			return this.conditions.inject(new Boolean(),function(bool,condition){
+			return this.conditions.inject(false, function (bool,condition) {
 				return (condition[0] == 'and') ? (bool && condition[1]()) : (bool || condition[1]());
 			});
 		}
@@ -276,15 +270,13 @@ Object.extend(Event.Behavior.Adjective.prototype,{
 	and: function(condition){
 		this.attached = false;
 		this.nextConditionType = 'and';
-		if(condition)
-			this[this.lastConditionName](condition);
+		if(condition) { this[this.lastConditionName](condition); }
 		return this;
 	},
 	or: function(condition){
 		this.attached = false;
 		this.nextConditionType = 'or';
-		if(condition)
-			this[this.lastConditionName](condition);
+		if(condition) { this[this.lastConditionName](condition); }
 		return this;
 	}
 });
