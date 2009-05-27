@@ -47,6 +47,7 @@ Control.ContextMenu = Class.create({
 			this.close(event);
 			return false;
 		}
+		this.clicked = Event.element(event);
 		Control.ContextMenu.current = this;
 		Control.ContextMenu.positionContainer(event);
 		Control.ContextMenu.container.show();
@@ -111,12 +112,12 @@ Control.ContextMenu = Class.create({
 				}.bind(this));
 				window.setTimeout(function(){
 					if(this.close() && this.options.delayCallback) {
-						item.callback(); }
+						item.callback(this.clicked); }
 				}.bind(this),this.options.animationLength);
 				if(!this.options.delayCallback) {
-					item.callback(); }
+					item.callback(this.clicked); }
 			}else if(this.close()) {
-				item.callback(); }
+				item.callback(this.clicked); }
 		}
 		event.stop();
 		return false;
