@@ -7,10 +7,12 @@
  * @require prototype.js, livepipe.js
  */
 
-if(typeof(Prototype) == "undefined")
-	throw "Control.ProgressBar requires Prototype to be loaded.";
-if(typeof(Object.Event) == "undefined")
-	throw "Control.ProgressBar requires Object.Event to be loaded.";
+/*global document, Prototype, Ajax, Class, PeriodicalExecuter, $, $A, Control */
+
+if(typeof(Prototype) == "undefined") {
+	throw "Control.ProgressBar requires Prototype to be loaded."; }
+if(typeof(Object.Event) == "undefined") {
+	throw "Control.ProgressBar requires Object.Event to be loaded."; }
 
 Control.ProgressBar = Class.create({
 	initialize: function(container,options){
@@ -19,7 +21,7 @@ Control.ProgressBar = Class.create({
 		this.active = false;
 		this.poller = false;
 		this.container = $(container);
-		this.containerWidth = this.container.getDimensions().width - (parseInt(this.container.getStyle('border-right-width').replace(/px/,'')) + parseInt(this.container.getStyle('border-left-width').replace(/px/,'')));
+		this.containerWidth = this.container.getDimensions().width - (parseInt(this.container.getStyle('border-right-width').replace(/px/,''), 10) + parseInt(this.container.getStyle('border-left-width').replace(/px/,''), 10));
 		this.progressContainer = $(document.createElement('div'));
 		this.progressContainer.setStyle({
 			width: this.containerWidth + 'px',
@@ -45,18 +47,18 @@ Control.ProgressBar = Class.create({
 	setProgress: function(value){
 		this.progress = value;
 		this.draw();
-		if(this.progress >= 100)
-			this.stop(false);
+		if(this.progress >= 100) {
+			this.stop(false); }
 		this.notify('afterChange',this.progress,this.active);
 	},
 	poll: function(url,interval){
 		this.active = true;
 		this.poller = new PeriodicalExecuter(function(){
-			new Ajax.Request(url,{
+			var a = new Ajax.Request(url,{
 				onSuccess: function(request){
-					this.setProgress(parseInt(request.responseText));
-					if(!this.active)
-						this.poller.stop();
+					this.setProgress(parseInt(request.responseText, 10));
+					if(!this.active) {
+						this.poller.stop(); }
 				}.bind(this)
 			});
 		}.bind(this),interval || 3);
@@ -69,12 +71,12 @@ Control.ProgressBar = Class.create({
 	},
 	stop: function(reset){
 		this.active = false;
-		if(this.executer)
-			this.executer.stop();
+		if(this.executer) {
+			this.executer.stop(); }
 		this.container.removeClassName(this.options.classNames.active);
 		this.container.addClassName(this.options.classNames.inactive);
-		if(typeof(reset) == 'undefined' || reset == true)
-			this.reset();
+		if (typeof reset  === 'undefined' || reset === true) {
+			this.reset(); }
 	},
 	step: function(amount){
 		this.active = true;
@@ -86,12 +88,12 @@ Control.ProgressBar = Class.create({
 	},
 	draw: function(){
 		this.progressContainer.setStyle({
-			width: (this.containerWidth - Math.floor((parseInt(this.progress) / 100) * this.containerWidth)) + 'px'
+			width: (this.containerWidth - Math.floor((parseInt(this.progress, 10) / 100) * this.containerWidth)) + 'px'
 		});
 	},
 	notify: function(event_name){
-		if(this.options[event_name])
-			return [this.options[event_name].apply(this.options[event_name],$A(arguments).slice(1))];
+		if(this.options[event_name]) {
+			return [this.options[event_name].apply(this.options[event_name],$A(arguments).slice(1))]; }
 	}
 });
 Object.Event.extend(Control.ProgressBar);
