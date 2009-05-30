@@ -22,10 +22,21 @@ var HotKey = Class.create({
 			element: false,
 			shiftKey: false,
 			altKey: false,
-			ctrlKey: true
+			ctrlKey: false,
+            bubbleEvent : true,
+            fireOnce : false // Keep repeating event while key is pressed?
 		},options || {});
 		this.letter = letter;
-		this.callback = callback;
+
+        // All custom hotkey events should stop after their custom actions.
+        this.callback = function (event) {
+            if (!(this.options.fireOnce && this.fired) && Object.isFunction(callback)) { 
+                callback(event); 
+            }
+            if (!this.options.bubbleEvent) { event.stop(); }
+            this.fired = true;
+        };
+
 		this.element = $(this.options.element || document);
 		this.handler = function(event){
 			if(!event || (
