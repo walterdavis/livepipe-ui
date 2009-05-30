@@ -37,6 +37,7 @@ Control.Rating = Class.create({
 			},
 			updateUrl: false,
 			updateParameterName: 'value',
+            updateOptions : {},
 			afterChange: Prototype.emptyFunction
 		};
 		Object.extend(this.options,options || {});
@@ -110,9 +111,9 @@ Control.Rating = Class.create({
 			if(this.options.updateUrl){
 				var params = {}, a;
 				params[this.options.updateParameterName] = this.value;
-				a = new Ajax.Request(this.options.updateUrl,{
-					parameters: params
-				});
+				a = new Ajax.Request(this.options.updateUrl, Object.extend(
+                    this.options.updateOptions, { parameters : params }
+                ));
 			}
 			this.notify('afterChange',this.value);
 		}
