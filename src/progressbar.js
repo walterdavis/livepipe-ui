@@ -51,16 +51,19 @@ Control.ProgressBar = Class.create({
 			this.stop(false); }
 		this.notify('afterChange',this.progress,this.active);
 	},
-	poll: function(url,interval){
+	poll: function (url, interval, ajaxOptions){
+        // Extend the passed ajax options and success callback with our own.
+        ajaxOptions = ajaxOptions || {};
+        var success = ajaxOptions.onSuccess || Prototype.emptyFunction;
+        ajaxOptions.onSuccess = function (request) {
+            this.setProgress(parseInt(request.responseText, 10));
+            if(!this.active) { this.poller.stop(); }
+            success(request);
+        }.bind(this);
+
 		this.active = true;
 		this.poller = new PeriodicalExecuter(function(){
-			var a = new Ajax.Request(url,{
-				onSuccess: function(request){
-					this.setProgress(parseInt(request.responseText, 10));
-					if(!this.active) {
-						this.poller.stop(); }
-				}.bind(this)
-			});
+            var a = new Ajax.Request(url, ajaxOptions);
 		}.bind(this),interval || 3);
 	},
 	start: function(){
