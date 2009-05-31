@@ -138,7 +138,7 @@ Control.Window = Class.create({
             hover: false, //element object to hover over, or if "true" only available for windows with sourceContainer (an anchor or any element already on the page with an href attribute)
             indicator: false, //element to show or hide when ajax requests, images and iframes are loading
             closeOnClick: false, //does not work with hover,can be: true (click anywhere), 'container' (will refer to this.container), or element (a specific element)
-            iframeshim: true, //wether or not to position an iFrameShim underneath the window 
+            iframeshim: true, //whether or not to position an iFrameShim underneath the window 
             //effects
             fade: false,
             fadeDuration: 0.75,
