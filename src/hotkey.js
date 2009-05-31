@@ -22,7 +22,7 @@ var HotKey = Class.create({
 			element: false,
 			shiftKey: false,
 			altKey: false,
-			ctrlKey: false,
+			ctrlKey: true,
             bubbleEvent : true,
             fireOnce : false // Keep repeating event while key is pressed?
 		},options || {});
