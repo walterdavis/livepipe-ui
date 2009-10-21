@@ -55,11 +55,11 @@ Control.ProgressBar = Class.create({
         // Extend the passed ajax options and success callback with our own.
         ajaxOptions = ajaxOptions || {};
         var success = ajaxOptions.onSuccess || Prototype.emptyFunction;
-        ajaxOptions.onSuccess = function (request) {
+        ajaxOptions.onSuccess = success.wrap(function (callOriginal, request) {
             this.setProgress(parseInt(request.responseText, 10));
             if(!this.active) { this.poller.stop(); }
-            success(request);
-        }.bind(this);
+            callOriginal(request);
+        }).bind(this);
 
         this.active = true;
         this.poller = new PeriodicalExecuter(function(){
