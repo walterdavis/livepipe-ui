@@ -186,16 +186,6 @@ Object.extend(Event, (function() {
         c[eventName] = c[eventName].without(findWrapper(id, eventName, handler));
     }
 
-    function destroyCache() {
-        for (var id in cache)
-            for (var eventName in cache[id])
-                cache[id][eventName] = null;
-    }
-
-    if (window.attachEvent) {
-        window.attachEvent("onunload", destroyCache);
-    }
-
     return {
         observe: function(element, eventName, handler) {
             element = $(element);
