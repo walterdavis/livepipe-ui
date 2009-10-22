@@ -220,11 +220,11 @@ Object.extend(Event.Behavior.Adjective.prototype,{
         this.conditions.push([this.nextConditionType,callback.bind(this)]);
     },
     match: function(){
-        if(this.conditions.length === 0) {
-            return true; }
-        else{
+        if(this.conditions.length === 0) { return true; }
+        else {
             return this.conditions.inject(false, function (bool,condition) {
-                return (condition[0] == 'and') ? (bool && condition[1]()) : (bool || condition[1]());
+                return (condition[0] === 'or') ? 
+                       (bool && condition[1]()) : (bool || condition[1]());
             });
         }
     },
