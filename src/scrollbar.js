@@ -74,12 +74,12 @@ Control.ScrollBar = Class.create({
         if(this.container.scrollHeight <= this.container.offsetHeight)
             this.disable();
         else{
+            this.enable();
             this.slider.trackLength = this.slider.maximumOffset() - this.slider.minimumOffset();
             if(this.options.proportional){
                 this.handle.style.height = Math.max(this.container.offsetHeight * (this.container.offsetHeight / this.container.scrollHeight),this.options.handle_minimum_height) + 'px';
                 this.slider.handleLength = this.handle.style.height.replace(/px/,'');
             }
-            this.enable();
         }
     },
     onWindowResize: function(){
