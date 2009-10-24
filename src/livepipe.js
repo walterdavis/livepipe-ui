@@ -279,18 +279,18 @@ Object.extend(document, {
 //mouse:wheel
 (function(){
     function wheel(event){
-        var delta;
+        var delta, element, custom_event;
         // normalize the delta
-        if(event.wheelDelta) // IE & Opera
+        if (event.wheelDelta) { // IE & Opera
             delta = event.wheelDelta / 120;
-        else if (event.detail) // W3C
+        } else if (event.detail) { // W3C
             delta =- event.detail / 3;
-        if(!delta)
-            return;
-        var custom_event = Event.element(event).fire('mouse:wheel',{
-            delta: delta
-        });
-        if(custom_event.stopped){
+        }
+        if (!delta) { return; }
+        element = Event.extend(event).target;
+        element = Element.extend(element.nodeType === Node.TEXT_NODE ? element.parentNode : element);
+        custom_event = element.fire('mouse:wheel',{ delta: delta });
+        if (custom_event.stopped) {
             Event.stop(event);
             return false;
         }
