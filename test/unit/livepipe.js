@@ -1,5 +1,7 @@
-module("livepipe base");
+module("LivePipe base");
+
 test("Basic requirements", function () {
+    expect(7);
     ok(Prototype, "Prototype");
     ok(Control, "Control");
     ok($proc, "$proc");
@@ -10,6 +12,7 @@ test("Basic requirements", function () {
 });
 
 test("mouse:wheel", function () {
+    expect(1);
     document.observe("mouse:wheel", function (evt) { 
         ok(true, "mouse:wheel fires"); 
     });
