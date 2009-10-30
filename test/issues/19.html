@@ -1,0 +1,21 @@
+<!doctype html>
+<html>
+<head>
+  <title>Test of Issue 19</title>
+</head>
+<body>
+  <script src="../../lib/prototype.js"></script>
+  <script src="../../src/livepipe.js"></script>
+  <script src="../../src/window.js"></script>
+  <script>
+    $$(".modal").each(function (link) {
+        new Control.Modal(link, {
+            className : "modal",
+            overlayOpacity : 0.75,
+            iframeshim : false
+        });
+    });
+    Control.Modal.close();
+  </script>
+</body>
+</html>
