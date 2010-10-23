@@ -23,10 +23,11 @@ var Cookie = {
     d.setTime(d.getTime() + (seconds * 1000));
     return d.toGMTString();
   },
-  set: function(name,value,seconds){
+  set: function(name,value,seconds,options){
     Cookie.notify('set',name,value);
+    var options = options ? options : "path=/";
     var expiry = seconds ? 'expires=' + Cookie.secondsFromNow(seconds) : null;
-    document.cookie = Cookie.build(name + "=" + value, expiry, "path=/");
+    document.cookie = Cookie.build(name + "=" + value, expiry, options);
   },
   get: function(name){
     Cookie.notify('get',name);
